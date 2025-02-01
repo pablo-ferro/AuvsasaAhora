@@ -7,6 +7,8 @@ Este proyecto tiene como misión visualizar en tiempo real todas las rutas de au
 
 La visualización está basada en un mapa interactivo donde se muestran los autobuses y las rutas disponibles en la ciudad, con información detallada sobre cada uno de ellos. Los usuarios pueden ver la ubicación de cada autobús, el nombre de la ruta y acceder a más detalles, como el nombre corto de la ruta y un enlace a más información sobre la misma.
 
+![App Interface for buses](busapp.png)
+
 #### Misión:
 
 Mejorar la accesibilidad a la información sobre el transporte público en mi ciudad, Valladolid.
