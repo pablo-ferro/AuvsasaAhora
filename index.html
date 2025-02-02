@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Dónde está mi bus?</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif; /* Set font to Helvetica */
+            text-align: center;
+            font-weight: bold; /* Make font bold */
+        }
+        #map {
+            height: 500px;
+            margin: 20px auto;
+            width: 90%;
+        }
+        .filter-btn {
+            margin: 5px;
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        .filter-btn:hover {
+            background: #0056b3;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>¿Dónde está mi bus?</h1>
+    <h3>Localización en tiempo real de todas las líneas de autobús de Auvasa</h3>
+    <div id="buttons"></div>
+    <div id="map"></div>
+    <footer>
+        Contenido creado y desarrollado por <a href="https://www.pabloferros.com" target="_blank">Pablo Fernandez</a> con datos de 
+        <a href="https://www.auvasa.es/auvasa/" target="_blank">Auvasa</a>
+    </footer>
+
+    <script>
+        const busData = [{'lat': 41.645606994628906, 'lon': -4.726357936859131, 'route': '9', 'name': 'Parquesol - Delicias-Polígono San Cristóbal'}, {'lat': 41.62961959838867, 'lon': -4.741345405578613, 'route': '2', 'name': 'San Pedro Regalado - Covaresa'}, {'lat': 41.63815689086914, 'lon': -4.759668827056885, 'route': '9', 'name': 'Parquesol - Delicias-Polígono San Cristóbal'}, {'lat': 41.64188003540039, 'lon': -4.720879554748535, 'route': '9', 'name': 'Parquesol - Delicias-Polígono San Cristóbal'}, {'lat': 41.656890869140625, 'lon': -4.742392063140869, 'route': '6', 'name': 'Delicias - La Victoria'}, {'lat': 41.613704681396484, 'lon': -4.7484540939331055, 'route': '2', 'name': 'San Pedro Regalado - Covaresa'}, {'lat': 41.6409912109375, 'lon': -4.73549222946167, 'route': '2', 'name': 'San Pedro Regalado - Covaresa'}, {'lat': 41.617706298828125, 'lon': -4.706217288970947, 'route': '9', 'name': 'Parquesol - Delicias-Polígono San Cristóbal'}, {'lat': 41.644439697265625, 'lon': -4.729172706604004, 'route': '19', 'name': 'Puente Duero - Hospital Río Hortega - La Cistérniga'}, {'lat': 41.55766677856445, 'lon': -4.7891998291015625, 'route': '18', 'name': 'Puente Duero - San Isidro - La Cistérniga'}, {'lat': 41.68400573730469, 'lon': -4.741525650024414, 'route': '4', 'name': 'Pinar de Jalón - Fuente Berrocal'}, {'lat': 41.63102340698242, 'lon': -4.750794887542725, 'route': '7', 'name': 'Arturo Eyries - Los Santos Pilarica'}, {'lat': 41.64739227294922, 'lon': -4.716486930847168, 'route': '3', 'name': 'Las Flores - Giron (Cementerio Contiendas)'}, {'lat': 41.65391540527344, 'lon': -4.724178314208984, 'route': '2', 'name': 'San Pedro Regalado - Covaresa'}, {'lat': 41.6436653137207, 'lon': -4.735551834106445, 'route': '7', 'name': 'Arturo Eyries - Los Santos Pilarica'}, {'lat': 41.65531539916992, 'lon': -4.705252647399902, 'route': '7', 'name': 'Arturo Eyries - Los Santos Pilarica'}, {'lat': 41.65584945678711, 'lon': -4.709409713745117, 'route': '7', 'name': 'Arturo Eyries - Los Santos Pilarica'}, {'lat': 41.6484375, 'lon': -4.724236011505127, 'route': '7', 'name': 'Arturo Eyries - Los Santos Pilarica'}, {'lat': 41.65518569946289, 'lon': -4.746273517608643, 'route': '3', 'name': 'Las Flores - Giron (Cementerio Contiendas)'}, {'lat': 41.6457633972168, 'lon': -4.722471714019775, 'route': '3', 'name': 'Las Flores - Giron (Cementerio Contiendas)'}, {'lat': 41.65538024902344, 'lon': -4.747743606567383, 'route': '3', 'name': 'Las Flores - Giron (Cementerio Contiendas)'}, {'lat': 41.67136001586914, 'lon': -4.721988677978516, 'route': '24', 'name': 'La Overuela - Pza. Poniente'}, {'lat': 41.61529541015625, 'lon': -4.754570007324219, 'route': '18', 'name': 'Puente Duero - San Isidro - La Cistérniga'}, {'lat': 41.644630432128906, 'lon': -4.714504718780518, 'route': '19', 'name': 'Puente Duero - Hospital Río Hortega - La Cistérniga'}, {'lat': 41.61335754394531, 'lon': -4.689156532287598, 'route': '18', 'name': 'Puente Duero - San Isidro - La Cistérniga'}, {'lat': 41.6241340637207, 'lon': -4.747223377227783, 'route': 'C1', 'name': 'Circular 1: Parquesol -  La Victoria - Parquesol'}, {'lat': 41.63812255859375, 'lon': -4.758275032043457, 'route': 'C1', 'name': 'Circular 1: Parquesol -  La Victoria - Parquesol'}, {'lat': 41.63452911376953, 'lon': -4.756520748138428, 'route': 'C1', 'name': 'Circular 1: Parquesol -  La Victoria - Parquesol'}, {'lat': 41.66032028198242, 'lon': -4.724865436553955, 'route': 'C1', 'name': 'Circular 1: Parquesol -  La Victoria - Parquesol'}, {'lat': 41.66283416748047, 'lon': -4.7150115966796875, 'route': '2', 'name': 'San Pedro Regalado - Covaresa'}, {'lat': 41.655784606933594, 'lon': -4.711125373840332, 'route': 'C1', 'name': 'Circular 1: Parquesol -  La Victoria - Parquesol'}, {'lat': 41.63948059082031, 'lon': -4.72092342376709, 'route': 'C1', 'name': 'Circular 1: Parquesol -  La Victoria - Parquesol'}, {'lat': 41.66101837158203, 'lon': -4.721533298492432, 'route': 'C2', 'name': 'Circular 2: Parquesol -  La Victoria - Parquesol'}, {'lat': 41.65526580810547, 'lon': -4.746227264404297, 'route': 'C2', 'name': 'Circular 2: Parquesol -  La Victoria - Parquesol'}, {'lat': 41.638221740722656, 'lon': -4.754868030548096, 'route': 'C2', 'name': 'Circular 2: Parquesol -  La Victoria - Parquesol'}, {'lat': 41.64748764038086, 'lon': -4.725939750671387, 'route': '2', 'name': 'San Pedro Regalado - Covaresa'}, {'lat': 41.63346862792969, 'lon': -4.722552299499512, 'route': 'C2', 'name': 'Circular 2: Parquesol -  La Victoria - Parquesol'}, {'lat': 41.645572662353516, 'lon': -4.7110114097595215, 'route': 'C2', 'name': 'Circular 2: Parquesol -  La Victoria - Parquesol'}, {'lat': 41.66086959838867, 'lon': -4.73367166519165, 'route': '6', 'name': 'Delicias - La Victoria'}, {'lat': 41.64778137207031, 'lon': -4.724975109100342, 'route': '6', 'name': 'Delicias - La Victoria'}, {'lat': 41.606651306152344, 'lon': -4.7472076416015625, 'route': '2', 'name': 'San Pedro Regalado - Covaresa'}, {'lat': 41.629417419433594, 'lon': -4.722912788391113, 'route': '6', 'name': 'Delicias - La Victoria'}, {'lat': 41.65923309326172, 'lon': -4.740809917449951, 'route': '5', 'name': 'La Victoria - Santa Ana (Entrepinos)'}, {'lat': 41.66115951538086, 'lon': -4.74153995513916, 'route': '5', 'name': 'La Victoria - Santa Ana (Entrepinos)'}, {'lat': 41.588592529296875, 'lon': -4.815247535705566, 'route': '5', 'name': 'La Victoria - Santa Ana (Entrepinos)'}, {'lat': 41.58818054199219, 'lon': -4.819627285003662, 'route': '5', 'name': 'La Victoria - Santa Ana (Entrepinos)'}, {'lat': 41.6511116027832, 'lon': -4.723214626312256, 'route': '6', 'name': 'Delicias - La Victoria'}, {'lat': 41.62840270996094, 'lon': -4.743725299835205, 'route': '5', 'name': 'La Victoria - Santa Ana (Entrepinos)'}, {'lat': 41.641929626464844, 'lon': -4.756241321563721, 'route': '8', 'name': 'Parquesol - Belén'}, {'lat': 41.64900588989258, 'lon': -4.7301836013793945, 'route': '8', 'name': 'Parquesol - Belén'}, {'lat': 41.65292739868164, 'lon': -4.716273784637451, 'route': '8', 'name': 'Parquesol - Belén'}, {'lat': 41.65701675415039, 'lon': -4.719865322113037, 'route': '8', 'name': 'Parquesol - Belén'}, {'lat': 41.653324127197266, 'lon': -4.735859394073486, 'route': '8', 'name': 'Parquesol - Belén'}, {'lat': 41.63511276245117, 'lon': -4.759645938873291, 'route': '8', 'name': 'Parquesol - Belén'}, {'lat': 41.658233642578125, 'lon': -4.722191333770752, 'route': '1', 'name': 'Barrio España - Covaresa'}, {'lat': 41.63394546508789, 'lon': -4.739901065826416, 'route': '1', 'name': 'Barrio España - Covaresa'}, {'lat': 41.653587341308594, 'lon': -4.731014728546143, 'route': '1', 'name': 'Barrio España - Covaresa'}, {'lat': 41.621158599853516, 'lon': -4.748055458068848, 'route': '1', 'name': 'Barrio España - Covaresa'}, {'lat': 41.64518356323242, 'lon': -4.7335991859436035, 'route': '1', 'name': 'Barrio España - Covaresa'}, {'lat': 41.660972595214844, 'lon': -4.722060203552246, 'route': '1', 'name': 'Barrio España - Covaresa'}];
+        const uniqueRoutes = [...new Set(busData.map(bus => bus.route))];
+        const map = L.map('map').setView([41.652251, -4.724532], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        let markers = [];
+
+        function updateMap(filterRoute) {
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+            busData.forEach(bus => {
+                if (!filterRoute || bus.route === filterRoute) {
+                    const marker = L.marker([bus.lat, bus.lon]).addTo(map).bindPopup(`<b>${bus.name}</b>`);
+                    markers.push(marker);
+                }
+            });
+        }
+
+        function createButtons() {
+            const buttonsDiv = document.getElementById('buttons');
+            uniqueRoutes.forEach(route => {
+                const btn = document.createElement('button');
+                btn.innerText = busData.find(bus => bus.route === route).name;  // Use route_long_name here
+                btn.className = 'filter-btn';
+                btn.onclick = () => updateMap(route);
+                buttonsDiv.appendChild(btn);
+            });
+            const allBtn = document.createElement('button');
+            allBtn.innerText = 'Todas';
+            allBtn.className = 'filter-btn';
+            allBtn.onclick = () => updateMap(null);
+            buttonsDiv.appendChild(allBtn);
+        }
+
+        createButtons();
+        updateMap(null);
+    </script>
+</body>
+</html>
