@@ -1,5 +1,6 @@
 # AuvsasaAhora
 Buses de Auvasa en Valladolid y situación en tiempo real de alertas y posición de vehiculo
+La aplicación está aún en desarrollo pero puedes testearla aquí: [¿Dónde está mi bus?](https://pablo-ferro.github.io/AuvsasaAhora/)
 
 ### (English below)
 
